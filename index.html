@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EventEase AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f6f5ff;color:#242344}
+header{background:#fff;padding:18px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e8e5f5}
+.logo{font-size:23px;font-weight:bold;color:#6952d8}
+.logo span{color:#29264b}
+.tag{color:#6952d8;background:#eeeaff;padding:8px 12px;border-radius:20px;font-size:12px}
+main{max-width:1050px;margin:35px auto;padding:0 20px}
+.hero{text-align:center;margin-bottom:28px}
+.hero h1{font-size:38px;margin:12px 0}
+.hero h1 span{color:#7358e8}
+.hero p{color:#6f6c85;line-height:1.6}
+.panel{background:white;border:1px solid #e8e4f5;border-radius:18px;padding:25px;margin-bottom:22px;box-shadow:0 8px 30px #35246b0a}
+h2{font-size:20px;margin-top:0}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-size:13px;font-weight:bold;display:block;margin-bottom:7px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #dedbea;border-radius:9px;font:inherit;background:#fff;color:#242344}
+textarea{min-height:90px;resize:vertical}
+.full{grid-column:1/-1}
+button{border:0;border-radius:9px;padding:12px 16px;cursor:pointer;font-weight:bold;font-size:14px}
+.primary{background:#7056df;color:white;width:100%;margin-top:18px}
+.primary:hover{background:#5840c4}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.type{background:#faf9ff;border:1px solid #e6e1f4;text-align:left;color:#393451}
+.type.active{background:#eeeaff;border:2px solid #8069e8;color:#5b42c7}
+.output{white-space:pre-wrap;line-height:1.65;color:#48445f;background:#faf9ff;padding:16px;border-radius:10px;min-height:80px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.secondary{background:#eeeaff;color:#6048cb}
+.small{font-size:12px;color:#77728d}
+footer{text-align:center;padding:25px;color:#77728d;font-size:12px}
+@media(max-width:650px){.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.types{grid-template-columns:1fr 1fr}.hero h1{font-size:30px}header{padding:16px 5%}}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">✦ EventEase <span>AI</span></div>
+ <div class="tag">SMART EVENT COMMUNICATION</div>
+</header>
+<main>
+ <section class="hero">
+  <div class="tag">✦ YOUR EVENT. EVERY MESSAGE. ONE PLACE.</div>
+  <h1>Event communication,<br><span>made effortless.</span></h1>
+  <p>Enter your event details once. Create ready-to-edit content<br>for every channel in seconds.</p>
+ </section>
+ <section class="panel">
+  <h2>✎ Tell us about your event</h2>
+  <div class="formgrid">
+   <div><label for="name">Event name *</label><input id="name" placeholder="e.g. College TechFest 2026"></div>
+   <div><label for="date">Date and time</label><input id="date" placeholder="e.g. 15 November, 10 AM"></div>
+   <div><label for="venue">Venue</label><input id="venue" placeholder="e.g. College auditorium"></div>
+   <div><label for="audience">Target audience</label><select id="audience"><option>College students</option><option>Faculty</option><option>Event participants</option><option>General public</option><option>Guests and sponsors</option></select></div>
+   <div class="full"><label for="desc">Event description *</label><textarea id="desc" placeholder="What is happening? Include activities, purpose and important details."></textarea></div>
+   <div><label for="link">Registration link (optional)</label><input id="link" placeholder="https://..."></div>
+   <div><label for="tone">Writing tone</label><select id="tone"><option>Friendly</option><option>Professional</option><option>Exciting</option><option>Formal</option></select></div>
+  </div>
+  <h2 style="margin-top:25px">✦ What do you want to create?</h2>
+  <div class="types" id="types">
+   <button class="type active" data-type="Social Media Caption">📸 Social captions</button>
+   <button class="type active" data-type="WhatsApp Message">💬 WhatsApp message</button>
+   <button class="type active" data-type="Event Reminder">⏰ Event reminder</button>
+   <button class="type active" data-type="Formal Email">✉️ Formal email</button>
+   <button class="type active" data-type="FAQs">❓ FAQs</button>
+   <button class="type active" data-type="Announcement">📢 Announcement</button>
+  </div>
+  <button class="primary" id="generate">✦ Generate Event Content</button>
+  <p class="small">Demo mode: outputs are generated in your browser from your event details.</p>
+ </section>
+ <section class="panel" id="results" hidden>
+  <h2>✦ Your generated content</h2>
+  <p class="small">Review and edit each result before sharing.</p>
+  <div id="outputList"></div>
+ </section>
+</main>
+<footer>EventEase AI · Smarter communication for every event</footer>
+<script>
+const buttons=[...document.querySelectorAll('.type')];
+buttons.forEach(b=>b.addEventListener('click',()=>b.classList.toggle('active')));
+function value(id){return document.getElementById(id).value.trim()}
+function makeContent(type,n,d,date,venue,audience,link,tone){
+ const details=(date?'\nDate & time: '+date:'')+(venue?'\nVenue: '+venue:'')+(link?'\nRegistration: '+link:'');
+ const invite='Join us for '+n+'! '+d+(date?' It takes place on '+date+'.':'')+(venue?' Venue: '+venue+'.':'')+(link?' Register here: '+link:'');
+ switch(type){
+ case 'Social Media Caption':return '✨ '+n+' ✨\n\n'+d+'\n\n📅 '+(date||'Date to be announced')+'\n📍 '+(venue||'Venue to be announced')+'\n\nBe part of the experience!'+(link?'\nRegister: '+link:'')+'\n\n#Event #CampusLife #'+n.replace(/[^a-z0-9]/gi,'');
+ case 'WhatsApp Message':return '📣 *'+n+'*\n\nHi everyone! 👋\n\n'+invite+'\n\nAudience: '+audience+'\n\nFeel free to share this message with others who may be interested!';
+ case 'Event Reminder':return '⏰ REMINDER: '+n+'\n\nA quick reminder about '+n+'.\n\n'+d+details+'\n\nPlease plan accordingly. We look forward to seeing you!';
+ case 'Formal Email':return 'Subject: Invitation to '+n+'\n\nDear '+audience+',\n\nWe are pleased to invite you to '+n+'.\n\n'+d+details+'\n\nWe would be delighted by your participation. Please refer to the registration details above if applicable.\n\nRegards,\nEvent Organizing Team';
+ case 'FAQs':return 'Frequently Asked Questions\n\nQ: What is '+n+'?\nA: '+d+'\n\nQ: When is the event?\nA: '+(date||'The date has not been provided yet. Please confirm with the organizer.')+'\n\nQ: Where will it take place?\nA: '+(venue||'The venue has not been provided yet. Please confirm with the organizer.')+'\n\nQ: Who can attend?\nA: '+audience+'.\n\nQ: How can I register?\nA: '+(link?'Use this registration link: '+link:'Registration details have not been provided. Please contact the organizer.');
+ case 'Announcement':return '📢 EVENT ANNOUNCEMENT\n\nWe are excited to announce '+n+'!\n\n'+d+details+'\n\nIntended audience: '+audience+'\n\n'+(tone==='Formal'?'Further information will be communicated by the organizing team.':'Stay tuned and spread the word!');
+ }
+}
+document.getElementById('generate').addEventListener('click',()=>{
+ const n=value('name'),d=value('desc');
+ if(!n||!d){alert('Please enter the event name and description first.');return}
+ const selected=buttons.filter(b=>b.classList.contains('active')).map(b=>b.dataset.type);
+ if(!selected.length){alert('Please select at least one content type.');return}
+ const list=document.getElementById('outputList');list.innerHTML='';
+ selected.forEach(type=>{
+  const card=document.createElement('div');card.style.marginBottom='22px';
+  const heading=document.createElement('h3');heading.textContent=type;heading.style.fontSize='16px';
+  const area=document.createElement('textarea');area.className='output';area.style.width='100%';area.style.minHeight='180px';
+  area.value=makeContent(type,n,d,value('date'),value('venue'),value('audience'),value('link'),value('tone'));
+  const actions=document.createElement('div');actions.className='actions';
+  const copy=document.createElement('button');copy.className='secondary';copy.textContent='Copy content';
+  copy.onclick=async()=>{try{await navigator.clipboard.writeText(area.value);copy.textContent='Copied!'}catch(e){area.select();document.execCommand('copy');copy.textContent='Copied!'}};
+  const regen=document.createElement('button');regen.className='secondary';regen.textContent='Regenerate';
+  regen.onclick=()=>{area.value=makeContent(type,n,d,value('date'),value('venue'),value('audience'),value('link'),value('tone'))+'\n\n'+(value('tone')==='Exciting'?'Don’t miss out!':value('tone')==='Formal'?'We look forward to your response.':'We hope to see you there!')};
+  actions.append(copy,regen);card.append(heading,area,actions);list.append(card);
+ });
+ const results=document.getElementById('results');results.hidden=false;results.scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>
